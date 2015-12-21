@@ -30,6 +30,24 @@ class FontAwesomePackagePopulator
       out.write <<-eos
 {
   "metadata" : {
+    "settings" : {
+      "analysis": {
+        "char_filter" : {
+          "no_special" : {
+            "type" : "mapping",
+            "mappings" : ["-=>"]
+          }
+        },
+        "analyzer" : {
+          "lower_whitespace" : {
+            "type" : "custom",
+            "tokenizer": "whitespace",
+            "filter" : ["lowercase"],
+            "char_filter" : ["no_special"]
+          }
+        }
+      }
+    },
     "mapping" : {
       "_all" : {
         "enabled" : false
@@ -37,8 +55,11 @@ class FontAwesomePackagePopulator
       "properties" : {
         "name" : {
           "type" : "string",
-          "index" : "not_analyzed",
-          "search_analyzer" : "whitespace"
+          "analyzer" : "lower_whitespace"
+        },
+        "suggest" : {
+          "type" : "completion",
+          "analyzer" : "lower_whitespace"
         }
       }
     }
@@ -60,7 +81,8 @@ class FontAwesomePackagePopulator
     source_doc.css('.container .row .fa.fa-fw').map { |node|
       node.next_sibling.text.strip.gsub(/^fa /, '').gsub('fa-fw', '').gsub(/^fa\-\w+\s+.+/, '');
     }.compact.uniq.map { |css_class| {
-      name: css_class
+      name: css_class,
+      suggest: css_class
     } }
   end
 end
