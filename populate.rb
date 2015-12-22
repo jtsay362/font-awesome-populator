@@ -35,7 +35,7 @@ class FontAwesomePackagePopulator
         "char_filter" : {
           "no_special" : {
             "type" : "mapping",
-            "mappings" : ["-=>"]
+            "mappings" : ["-=>", "f=>", "a=>"]
           }
         },
         "analyzer" : {
